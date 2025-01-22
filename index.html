@@ -29,38 +29,45 @@
         <!-- Lista de pessoas -->
         <label for="pessoa">Selecione uma pessoa:</label>
         <select id="pessoa">
-            <option value="1">João</option>
-            <option value="2">Maria</option>
-            <option value="3">Carlos</option>
+            <option value="João">João</option>
+            <option value="Maria">Maria</option>
+            <option value="Carlos">Carlos</option>
         </select>
 
         <!-- Campo de observações -->
         <label for="observacoes">Observações:</label>
         <textarea id="observacoes" placeholder="Digite as observações aqui..."></textarea>
+        <button onclick="salvarObservacao()">Salvar</button>
     </div>
 
     <script>
-        // Informações iniciais das pessoas
-        const observacoes = {
-            1: "João gosta de esportes.",
-            2: "Maria adora ler livros de ficção científica.",
-            3: "Carlos é programador e trabalha com tecnologia."
-        };
+        // URL da API que você obteve ao fazer o deploy
+        const apiURL = "https://script.google.com/macros/s/AKfycbwXXX/exec";  // Substitua com sua URL
 
-        // Atualizar as observações conforme a pessoa selecionada
-        const selectPessoa = document.getElementById('pessoa');
-        const textareaObservacoes = document.getElementById('observacoes');
+        // Função para salvar observações na planilha via POST
+        function salvarObservacao() {
+            const pessoaSelecionada = document.getElementById('pessoa').value;
+            const observacao = document.getElementById('observacoes').value;
 
-        selectPessoa.addEventListener('change', function() {
-            const pessoaId = selectPessoa.value;
-            textareaObservacoes.value = observacoes[pessoaId] || '';
-        });
+            // Cria o objeto com os parâmetros a serem enviados
+            const params = new URLSearchParams();
+            params.append('pessoa', pessoaSelecionada);
+            params.append('observacao', observacao);
 
-        // Carregar observação inicial para o primeiro item selecionado
-        window.onload = function() {
-            const pessoaId = selectPessoa.value;
-            textareaObservacoes.value = observacoes[pessoaId] || '';
-        };
+            // Faz o envio dos dados via POST
+            fetch(apiURL, {
+                method: 'POST',
+                body: params
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);  // Exibe a resposta da API
+                document.getElementById('observacoes').value = '';  // Limpa o campo de observações
+            })
+            .catch(error => {
+                alert('Erro ao salvar: ' + error.message);
+            });
+        }
     </script>
 </body>
 </html>
